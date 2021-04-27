@@ -3,51 +3,33 @@ import 'package:dev_quiz/shared/models/answer_model.dart';
 import 'package:dev_quiz/shared/models/question_model.dart';
 import 'package:dev_quiz/shared/models/quiz_model.dart';
 import 'package:dev_quiz/shared/models/user_model.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 import '../core/app_images.dart';
+import 'home_repository.dart';
 
 class HomeController {
 // O home controller vai abordar o usuário e os Quizzes
 
-  HomeState state = HomeState.empty;
+  final stateNotifier = ValueNotifier<HomeState>(HomeState.empty);
+  set state(HomeState state) => stateNotifier.value = state;
+  HomeState get state => stateNotifier.value;
 
   UserModel? user;
   List<QuizModel>? quizzes;
 
+  final repository = HomeRepository();
+
   void getUser() async {
     state = HomeState.loading;
-    await Future.delayed(Duration(seconds: 2));
-
-    user = UserModel(
-      name: "Pedro Moreira",
-      photoUrl: "https://avatars.githubusercontent.com/u/40441565?v=4",
-    );
-
+    user = await repository.getUser();
     state = HomeState.success;
   }
 
   void getQuizzes() async {
     state = HomeState.loading;
-    await Future.delayed(Duration(seconds: 2));
-    quizzes = [
-      QuizModel(
-        title: "NLW 5 Flutter",
-        questions: [
-          QuestionModel(
-            title: "Está Curtindo o Flutter?",
-            answers: [
-              AnswerModel(title: "Estou curtindo"),
-              AnswerModel(title: "Amando Flutter"),
-              AnswerModel(title: "Flutter é legal"),
-              AnswerModel(title: "Show de bola!", isRight: true),
-            ],
-          )
-        ],
-        imagem: AppImages.blocks,
-        level: Level.facil,
-      )
-    ];
-
+    quizzes = await repository.getQuizzes();
     state = HomeState.success;
   }
 }

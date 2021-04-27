@@ -21,10 +21,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     controller.getUser();
     controller.getQuizzes();
+    controller.stateNotifier.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
